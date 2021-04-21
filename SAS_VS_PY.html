@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- COLOR SYNTAXING WEBSITES:
+ Python:
+ https://pinetools.com/syntax-highlighter
+ Style: Idea
+ 
+ SAS:
+ https://highlight.hohli.com/index.php
+------------>
+
+
+<style>
+/* text-size: 200%; */
+
+* {
+  box-sizing: border-box;
+}
+
+tt {
+  background-color: #dddddd;
+  font-size: 120%;
+}
+
+h1, h2, h3, li {
+  font-family: Helvetica, sans-serif;
+  /* display: inline; */
+}
+h2 {
+  background: #d0f5ce;
+}
+
+.info {
+  width: 1000px;
+  font-family: Helvetica, sans-serif;
+}
+
+/* Create two equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+  border: 2px solid black;
+  height: 300px; /* Should be removed. Only for demonstration */
+}
+
+/* Create two equal columns that floats next to each other */
+.SAScolumn {
+  background-color:#ffffff;
+  float: left;
+  width: 45%;
+  padding: 10px;
+  border: 2px solid black;
+  /*height: 300px;  Should be removed. Only for demonstration */
+}
+
+.SEPcolumn {
+  float: left;
+  width: 2%;
+}
+
+/* Create two equal columns that floats next to each other */
+.PYcolumn {
+  background-color:#ffffff;
+  float: left;
+  width: 45%;
+  padding: 10px;
+  border: 2px solid black;
+  /*height: 300px;  Should be removed. Only for demonstration */
+}
+
+/* Create two equal columns that floats next to each other for images*/
+.IMGcolumn {
+  float: left;
+  width: 45%;
+}
+
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* unvisited link */
+a:link {
+    color: #000;
+}
+
+/* visited link */
+a:visited {
+    color: #000;
+}
+
+/* mouse over link */
+a:hover {
+    color: red;
+}
+
+/* selected link */
+a:active {
+    color: 000;
+
+</style>
+</head>
+<body style="background-color: #f8f8f8;">
+
+<h1 id="top">SAS vs. Python examples</h1>
+<div class="info">Here is a list of some common SAS operations as well as an example
+of how to run the same code in Python. This will be available in the git repository for
+the Python-course and on the following internal web page:<br />
+<a href="http://146.192.254.241:8089/g020029/SAS_VS_PY.html">http://146.192.254.241:8089/g020029/SAS_VS_PY.html</a>
+<br /><br />
+Let me know if there are any other
+commonly used SAS operations that you would like me to add!</div>
+
+
+<!--------------------------------------------------------------------------->
+<h3>Table of contents</h3>
+<ul>
+ <li><a href="#testdata">Creating some test data</a></li>
+ <li><a href="#readdb">Reading from database</a></li>
+ <li><a href="#readcsv">Reading/Writing to CSV</a></li>
+ <li><a href="#readxl">Reading/Writing to Excel</a></li>
+ <li><a href="#readsas">Reading/Writing to sas7bdat</a></li>
+ <li><a href="#newtable">Create new table</a></li>
+ <li><a href="#getnrows">Getting first N rows</a></li>
+ <li><a href="#addcols">Adding and Removing columns</a></li>
+ <li><a href="#rename">Renaming column</a></li>
+ <li><a href="#reorder">Reordering columns</a></li>
+ <li><a href="#stringop">String operations</a></li>
+ <li><a href="#wherestm">Where statement</a></li>
+ <li><a href="#ifelsestm">If/else condition</a></li>
+ <li><a href="#mergejoin">Merge/join tables</a></li>
+ <li><a href="#append">Append tables</a></li>
+ <li><a href="#agg">Aggregating a table</a></li>
+ <li><a href="#sort">Sorting a table</a></li>
+ <li><a href="#custom">Custom function</a></li>
+ <li><a href="#procfreq">Proc freq Example</a></li>
+ <li><a href="#deltab">Deleting a table</a></li>
+</ul>
+
+<br />
+<br />
+<div class="info"><b>Note</b>: All examples use the <tt>pandas</tt> library.
+You only have to import it once per session. The import statement has been
+included in several examples, just remember that it can be ignored if <tt>pandas</tt>
+is already imported.</div>
+
+
+<!--========================================================================================================================-->
+<br /><br /><br />
+<hr />
+<h2 id="testdata">Creating some test data</h2>
+<a href="#top">Back to top</a>
+<br /><br />
+<div class="info">Creating some data for test purposes is a great way to learn the basics of Python.</div>
+
+<br /><br />
+
+<div class="row">
+  <div class="SAScolumn">
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* Creating some test data - ALTERNATIVE 1;</span>
+<span style="color: #000080; font-weight: bold;">proc sql</span>;
+	<span style="color: #0000ff;">create</span> <span style="color: #0000ff;">table</span> WORK.DT<span style="color: #66cc66;">&#40;</span>
+		CAT varchar<span style="color: #66cc66;">&#40;</span><span style="color: #2e8b57; font-weight: bold;">1</span><span style="color: #66cc66;">&#41;</span>,
+		VAL numeric<span style="color: #66cc66;">&#40;</span><span style="color: #2e8b57; font-weight: bold;">1</span><span style="color: #66cc66;">&#41;</span>
+	<span style="color: #66cc66;">&#41;</span>;
+<span style="color: #0000ff;">insert</span> <span style="color: #0000ff;">into</span> WORK.DF values<span style="color: #66cc66;">&#40;</span><span style="color: #a020f0;">&quot;A&quot;</span>, <span style="color: #2e8b57; font-weight: bold;">1</span><span style="color: #66cc66;">&#41;</span>; 
+<span style="color: #0000ff;">insert</span> <span style="color: #0000ff;">into</span> WORK.DF values<span style="color: #66cc66;">&#40;</span><span style="color: #a020f0;">&quot;B&quot;</span>, <span style="color: #2e8b57; font-weight: bold;">2</span><span style="color: #66cc66;">&#41;</span>; 
+<span style="color: #0000ff;">insert</span> <span style="color: #0000ff;">into</span> WORK.DF values<span style="color: #66cc66;">&#40;</span><span style="color: #a020f0;">&quot;C&quot;</span>, <span style="color: #2e8b57; font-weight: bold;">3</span><span style="color: #66cc66;">&#41;</span>;   
+<span style="color: #000080; font-weight: bold;">quit</span>;
+&nbsp;
+&nbsp;
+<span style="color: #006400; font-style: italic;">* Creating some test data - ALTERNATIVE 2;</span>
+<span style="color: #000080; font-weight: bold;">data</span> DT;
+   <span style="color: #0000ff;">input</span> CAT $ VAL;
+   datalines;
+<span style="background-color: #ffffc0;">A 1</span>
+<span style="background-color: #ffffc0;">B 2</span>
+<span style="background-color: #ffffc0;">C 3</span>
+;</pre>
+<br /><img src="imgSASvsPY\logosas.png" width="75px" style="float: right;"/>
+  </div>
+  
+  <div class="SEPcolumn">&nbsp;</div>
+  
+  <div class="PYcolumn">
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-keyword" style="font-weight: 700; color: navy;">import</span> pandas <span class="hljs-keyword" style="font-weight: 700; color: navy;">as</span> pd
+
+<span class="hljs-comment" style="color: grey; font-style: italic;"># Creating some test data</span>
+dt = pd.DataFrame({
+    <span class="hljs-string" style="font-weight: 700; color: green;">"CAT"</span>: [<span class="hljs-string" style="font-weight: 700; color: green;">"A"</span>, <span class="hljs-string" style="font-weight: 700; color: green;">"B"</span>, <span class="hljs-string" style="font-weight: 700; color: green;">"C"</span>],
+    <span class="hljs-string" style="font-weight: 700; color: green;">"VAL"</span>: [<span class="hljs-number" style="color: rgb(0, 0, 255); font-weight: 400;">1</span>, <span class="hljs-number" style="color: rgb(0, 0, 255); font-weight: 400;">2</span>, <span class="hljs-number" style="color: rgb(0, 0, 255); font-weight: 400;">3</span>]
+})</pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\SAS_TestData.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PY_TestData.jpg" />
+  </div>
+ </div>
+ 
+ 
+ <!--========================================================================================================================-->
+<br /><br /><br />
+<hr />
+<h2 id="readdb">Reading from database</h2>
+<a href="#top">Back to top</a>
+<br /><br />
+<div class="info">Use one of the functions from <tt>gj_common_py</tt> to read from DB2.
+You need to have a <tt>.netrc</tt> file for the code to work.<br />
+<br />
+Note that we are sending DB2 queries directly, and they can be a lot more complicated than this example shows.</div>
+<br /><br />
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* Reading from database;</span>
+<span style="color: #0000ff;">libname</span> INFO <span style="color: #0000ff;">db2 db</span>=IVHP01 <span style="color: #0000ff;">schema</span>=G00V <span style="color: #0000ff;">user</span>=&amp;<span style="color: #8dc9c9;">user_id.</span> <span style="color: #0000ff;">pw</span>=&amp;<span style="color: #8dc9c9;">pwd.</span>  <span style="color: #0000ff;">access</span>=readonly;
+<span style="color: #000080; font-weight: bold;">data</span> DBDATA;
+	<span style="color: #0000ff;">set</span> INFO.D_AAR;
+<span style="color: #000080; font-weight: bold;">run</span>;</pre>
+<br /><img src="imgSASvsPY\logosas.png"  width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-keyword" style="font-weight: 700; color: navy;">from</span> gj_common_py.db_funcs <span class="hljs-keyword" style="font-weight: 700; color: navy;">import</span> run_sql_with_ibmdb
+<span class="hljs-keyword" style="font-weight: 700; color: navy;">import</span> pandas <span class="hljs-keyword" style="font-weight: 700; color: navy;">as</span> pd
+
+<span class="hljs-comment" style="color: grey; font-style: italic;"># Reading from database</span>
+dbdata = pd.DataFrame(run_sql_with_ibmdb(<span class="hljs-string" style="font-weight: 700; color: green;">"IVHP01"</span>, <span class="hljs-string" style="font-weight: 700; color: green;">"select * from G00V.D_AAR"</span>))</pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black; width: 100%;" src="imgSASvsPY\SAS_ReadDB.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black; width: 100%;" src="imgSASvsPY\PY_ReadDB.jpg" />
+  </div>
+ </div>
+
+</template>
+
+
+
+<!--========================================================================================================================-->
+<br /><br /><br />
+<hr />
+<h2 id="readcsv">Reading/Writing to CSV</h2>
+<a href="#top">Back to top</a>
+<br /><br />
+<div class="info">The pandas library has a function for reading CSV files: <tt>read_csv()</tt>.</div>
+<br /><br />
+
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* Reading from CSV;</span>
+<span style="color: #000080; font-weight: bold;">proc import</span> <span style="color: #0000ff;">datafile</span>=<span style="color: #a020f0;">'/mnt_g/GF_Prising/G020029/exampleData.csv'</span> 
+<span style="color: #0000ff;">out</span>=TESTDATA <span style="color: #0000ff;">dbms</span>=csv <span style="color: #0000ff;">replace</span>; 
+<span style="color: #0000ff;">getnames</span>=yes; 
+<span style="color: #000080; font-weight: bold;">run</span>;</pre>
+<br /><img src="imgSASvsPY\logosas.png" width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-keyword" style="font-weight: 700; color: navy;">import</span> pandas <span class="hljs-keyword" style="font-weight: 700; color: navy;">as</span> pd
+
+<span class="hljs-comment" style="color: grey; font-style: italic;"># Reading from CSV</span>
+testdata = pd.read_csv(<span class="hljs-string" style="font-weight: 700; color: green;">'/mnt_g/GF_Prising/G020029/exampleData.csv'</span>)</pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\SAS_ReadCSV.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PY_ReadCSV.jpg" />
+  </div>
+ </div>
+
+<br /><br />
+
+ 
+<div class="info">Pandas includes the row numbers (or index) by default. They can be
+omitted by including the <tt>index=False</tt> argument to the function:<br />
+<tt>testdata.to_csv('out.csv', index=False)</tt>.</div>
+
+
+<br /><br />
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* Writing to CSV;</span>
+<span style="color: #0000ff;">filename</span> exprt <span style="color: #a020f0;">'/mnt_g/GF_Prising/G020029/OUTPUTFILE.csv'</span> encoding=<span style="color: #a020f0;">&quot;utf-8&quot;</span>;
+<span style="color: #000080; font-weight: bold;">proc export</span> <span style="color: #0000ff;">data</span>=TESTDATA
+	<span style="color: #0000ff;">outfile</span>=exprt
+	<span style="color: #0000ff;">dbms</span>=csv
+	<span style="color: #0000ff;">replace</span>;
+<span style="color: #000080; font-weight: bold;">run</span>;</pre>
+<br /><img src="imgSASvsPY\logosas.png"  width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-keyword" style="font-weight: 700; color: navy;">import</span> pandas <span class="hljs-keyword" style="font-weight: 700; color: navy;">as</span> pd
+
+<span class="hljs-comment" style="color: grey; font-style: italic;"># Writing to CSV</span>
+testdata.to_csv(<span class="hljs-string" style="font-weight: 700; color: green;">'/mnt_g/GF_Prising/G020029/OUTPUTFILE_PY.csv'</span>)</pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\SAS_WriteCSV.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PY_WriteCSV.jpg" />
+  </div>
+ </div>
+
+
+<!--========================================================================================================================-->
+<br /><br /><br />
+<hr />
+<h2 id="readxl">Reading/Writing to Excel</h2>
+<a href="#top">Back to top</a>
+<br /><br />
+<div class="info">The pandas library has a function for reading Excel files: <tt>to_excel()</tt>.</div>
+<br /><br />
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* Reading from Excel;</span>
+<span style="color: #000080; font-weight: bold;">proc import</span> <span style="color: #0000ff;">datafile</span>=<span style="color: #a020f0;">'/mnt_g/GF_Prising/G020029/OUTPUTFILE.xlsx'</span> 
+	<span style="color: #0000ff;">out</span>=TESTDATA2 <span style="color: #0000ff;">dbms</span>=xlsx <span style="color: #0000ff;">replace</span>; 
+	<span style="color: #0000ff;">getnames</span>=yes; 
+<span style="color: #000080; font-weight: bold;">run</span>;</pre>
+<br /><img src="imgSASvsPY\logosas.png"  width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-keyword" style="font-weight: 700; color: navy;">import</span> pandas <span class="hljs-keyword" style="font-weight: 700; color: navy;">as</span> pd
+
+<span class="hljs-comment" style="color: grey; font-style: italic;"># Reading from Excel</span>
+testdata2 = pd.read_excel(<span class="hljs-string" style="font-weight: 700; color: green;">'/mnt_g/GF_Prising/G020029/OUTPUTFILE_PY.xlsx'</span>, sheet_name=<span class="hljs-string" style="font-weight: 700; color: green;">"data"</span>)</pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\SAS_ReadExcel.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PY_ReadExcel.jpg" />
+  </div>
+ </div>
+
+<br /><br />
+<div class="info">The pandas library has a function for writing Excel files: <tt>write_excel()</tt>.
+By default it includes the index which are omitted with <tt>index=False</tt>.</div>
+<br /><br />
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* Writing to Excel;</span>
+<span style="color: #000080; font-weight: bold;">proc export</span> <span style="color: #0000ff;">data</span>=TESTDATA
+	<span style="color: #0000ff;">outfile</span>=<span style="color: #a020f0;">&quot;/mnt_g/GF_Prising/G020029/OUTPUTFILE.xlsx&quot;</span> 
+	<span style="color: #0000ff;">dbms</span>=XLSX
+	<span style="color: #0000ff;">replace</span>;
+	<span style="color: #0000ff;">sheet</span>=<span style="color: #a020f0;">'data'</span>; 
+<span style="color: #000080; font-weight: bold;">run</span>;</pre>
+<br /><img src="imgSASvsPY\logosas.png"  width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-keyword" style="font-weight: 700; color: navy;">import</span> pandas <span class="hljs-keyword" style="font-weight: 700; color: navy;">as</span> pd
+
+<span class="hljs-comment" style="color: grey; font-style: italic;"># Writing to Excel</span>
+testdata.to_excel(<span class="hljs-string" style="font-weight: 700; color: green;">'/mnt_g/GF_Prising/G020029/OUTPUTFILE_PY.xlsx'</span>, sheet_name=<span class="hljs-string" style="font-weight: 700; color: green;">"data"</span>, index=<span class="hljs-keyword" style="font-weight: 700; color: navy;">False</span>)</pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\SAS_WriteExcel.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PY_WriteExcel.jpg" />
+  </div>
+ </div>
+
+
+<!--========================================================================================================================-->
+<br /><br /><br />
+<hr />
+<h2 id="readsas">Reading/Writing to sas7bdat</h2>
+<a href="#top">Back to top</a>
+<br /><br />
+<div class="info">SAS can store data directly in folders as 'sas7bdat' files. Python has
+many different alternatives, but here we use <tt>pickle</tt> files.</div>
+<br /><br />
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* Reading from sas7bdat file;</span>
+<span style="color: #0000ff;">libname</span> MYFOLDER <span style="color: #a020f0;">'/mnt_g/GF_Prising/G020029/MYFOLDER/'</span>;
+&nbsp;
+<span style="color: #000080; font-weight: bold;">data</span> TESTDATA3;
+	<span style="color: #0000ff;">set</span> MYFOLDER.OUTTABLE;
+<span style="color: #000080; font-weight: bold;">run</span>;</pre>
+<br /><img src="imgSASvsPY\logosas.png"  width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-keyword" style="font-weight: 700; color: navy;">import</span> pandas <span class="hljs-keyword" style="font-weight: 700; color: navy;">as</span> pd
+
+<span class="hljs-comment" style="color: grey; font-style: italic;"># Reading pickle file</span>
+testdata3 = pd.read_pickle(<span class="hljs-string" style="font-weight: 700; color: green;">"/mnt_g/GF_Prising/G020029/MYFOLDER/outtable.pickle"</span>)</pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\SAS_ReadSAS.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PY_ReadPY.jpg" />
+  </div>
+ </div>
+
+<br /><br />
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* Writing to sas7bdat file;</span>
+<span style="color: #0000ff;">libname</span> MYFOLDER <span style="color: #a020f0;">'/mnt_g/GF_Prising/G020029/MYFOLDER/'</span>;
+&nbsp;
+<span style="color: #000080; font-weight: bold;">data</span> MYFOLDER.OUTTABLE;
+	<span style="color: #0000ff;">set</span> TESTDATA;
+<span style="color: #000080; font-weight: bold;">run</span>;</pre>
+<br /><img src="imgSASvsPY\logosas.png"  width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-keyword" style="font-weight: 700; color: navy;">import</span> pandas <span class="hljs-keyword" style="font-weight: 700; color: navy;">as</span> pd
+
+<span class="hljs-comment" style="color: grey; font-style: italic;"># Writing to pickle file</span>
+testdata.to_pickle(<span class="hljs-string" style="font-weight: 700; color: green;">"/mnt_g/GF_Prising/G020029/MYFOLDER/outtable.pickle"</span>)</pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\SAS_WriteSAS.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PY_WritePY.jpg" />
+  </div>
+ </div>
+
+<!--========================================================================================================================-->
+<br /><br /><br />
+<hr />
+<h2 id="newtable">Create new table</h2>
+<a href="#top">Back to top</a>
+<br /><br />
+<div class="info">In SAS it is common to create new tables using the DATA step. When using <tt>pandas</tt>, all operations are
+typically done directly in memory, or 'in-place'. This makes it more efficient and faster. To make a copy of the data, it has to
+be explicitly done with the <tt>copy()</tt> function.<br />
+<br />
+If a table is copied with <tt>newtab = testdata</tt>, both will point to the same memory, and any changes made to one
+table will affect both!
+</div>
+<br /><br />
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* Create new table;</span>
+<span style="color: #000080; font-weight: bold;">data</span> NEWTAB;
+	<span style="color: #0000ff;">set</span> TESTDATA;
+<span style="color: #000080; font-weight: bold;">run</span>;</pre>
+<br /><img src="imgSASvsPY\logosas.png"  width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-keyword" style="font-weight: 700; color: navy;">import</span> pandas <span class="hljs-keyword" style="font-weight: 700; color: navy;">as</span> pd
+
+<span class="hljs-comment" style="color: grey; font-style: italic;"># Create new table</span>
+newtab = testdata.copy()</pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+
+
+<!--========================================================================================================================-->
+<br /><br /><br />
+<hr />
+<h2 id="getnrows">Getting first N rows</h2>
+<a href="#top">Back to top</a>
+<br /><br />
+<div class="info">An alternative is using <tt>testdata.head(n=2)</tt>. There is also <tt>testdata.tail(n=2)</tt>
+for getting the last rows in the table.</div>
+<br /><br />
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* Getting first N rows;</span>
+<span style="color: #000080; font-weight: bold;">data</span> SUBSET;
+	<span style="color: #0000ff;">set</span> TESTDATA<span style="color: #66cc66;">&#40;</span>obs=<span style="color: #2e8b57; font-weight: bold;">2</span><span style="color: #66cc66;">&#41;</span>;
+<span style="color: #000080; font-weight: bold;">run</span>;</pre>
+<br /><img src="imgSASvsPY\logosas.png"  width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-comment" style="color: grey; font-style: italic;"># Getting first N rows</span>
+subset = testdata[:<span class="hljs-number" style="color: rgb(0, 0, 255); font-weight: 400;">2</span>]</pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\SAS_GetNRows.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PY_GetNRows.jpg" />
+  </div>
+ </div>
+
+
+
+
+<!--========================================================================================================================-->
+<br /><br /><br />
+<hr />
+<h2 id="addcols">Adding and Removing columns</h2>
+<a href="#top">Back to top</a>
+<br /><br />
+<div class="info">Assigning new columns is typically done directly into the table.</div>
+<br /><br />
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* Adding new columns;</span>
+<span style="color: #000080; font-weight: bold;">data</span> TESTDATA;
+	<span style="color: #0000ff;">set</span> TESTDATA;
+	Constant = <span style="color: #2e8b57; font-weight: bold;">5</span>;
+	PropCapital = PopCapital/PopCountry;
+<span style="color: #000080; font-weight: bold;">run</span>;</pre>
+<br /><img src="imgSASvsPY\logosas.png" width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-comment" style="color: grey; font-style: italic;"># Adding new columns</span>
+testdata[<span class="hljs-string" style="font-weight: 700; color: green;">"Constant"</span>] = <span class="hljs-number" style="color: rgb(0, 0, 255); font-weight: 400;">5</span>
+testdata[<span class="hljs-string" style="font-weight: 700; color: green;">"PropCapital"</span>] = testdata[<span class="hljs-string" style="font-weight: 700; color: green;">"PopCapital"</span>]/testdata[<span class="hljs-string" style="font-weight: 700; color: green;">"PopCountry"</span>]</pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\SAS_AddCols.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PY_AddCols.jpg" />
+  </div>
+ </div>
+ 
+ <br /><br />
+<div class="info">Note we assign the table back into <tt>testdata</tt>. We include <tt>axis=1</tt>
+to signify that we are specifying column names. (By default it targets the column index/number).</div>
+<br /><br />
+ 
+ <div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* Removing columns;</span>
+<span style="color: #000080; font-weight: bold;">data</span> TESTDATA;
+	<span style="color: #0000ff;">set</span> TESTDATA;
+	<span style="color: #0000ff;">drop</span> Constant PropCapital;
+<span style="color: #000080; font-weight: bold;">run</span>;</pre>
+<br /><img src="imgSASvsPY\logosas.png" width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-comment" style="color: grey; font-style: italic;"># Removing columns</span>
+testdata = testdata.drop([<span class="hljs-string" style="font-weight: 700; color: green;">'Constant'</span>, <span class="hljs-string" style="font-weight: 700; color: green;">'PropCapital'</span>], axis=<span class="hljs-number" style="color: rgb(0, 0, 255); font-weight: 400;">1</span>)</pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;width: 50%;" src="imgSASvsPY\SAS_ReadCSV.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PY_ReadCSV.jpg" />
+  </div>
+ </div>
+
+<!--========================================================================================================================-->
+<br /><br /><br />
+<hr />
+<h2 id="rename">Renaming column</h2>
+<a href="#top">Back to top</a>
+<br /><br />
+<div class="info">Renaming is done with the <tt>rename()</tt> function. Several columns can be renamed
+by adding them to the <tt>dictionary</tt> (the part specified in <tt>{}</tt>) and separating them with commas.</div>
+<br /><br />
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* Renaming column;</span>
+<span style="color: #000080; font-weight: bold;">data</span> TESTDATA;
+	<span style="color: #0000ff;">set</span> TESTDATA;
+	<span style="color: #0000ff;">rename</span> PopCapital = PopMetro;
+<span style="color: #000080; font-weight: bold;">run</span>;</pre>
+<br /><img src="imgSASvsPY\logosas.png"  width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-comment" style="color: grey; font-style: italic;"># Renaming column</span>
+testdata = testdata.rename(columns={<span class="hljs-string" style="font-weight: 700; color: green;">"PopCapital"</span>: <span class="hljs-string" style="font-weight: 700; color: green;">"PopMetro"</span>})</pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\SAS_Rename.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PY_Rename.jpg" />
+  </div>
+ </div>
+ 
+ 
+
+<!--========================================================================================================================-->
+<br /><br /><br />
+<hr />
+<h2 id="reorder">Reordering columns</h2>
+<a href="#top">Back to top</a>
+<br /><br />
+<div class="info">We pass a list of the columns in the desired order.</div>
+<br /><br />
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* Reordering columns;</span>
+<span style="color: #000080; font-weight: bold;">proc sql</span>;
+<span style="color: #0000ff;">create</span> <span style="color: #0000ff;">table</span> WORK.TESTDATA
+	<span style="color: #0000ff;">as</span> <span style="color: #0000ff;">select</span> Country, Capital, PopCountry, PopCapital, CountryCode
+<span style="color: #0000ff;">from</span> WORK.TESTDATA;
+<span style="color: #000080; font-weight: bold;">quit</span>;</pre>
+<br /><img src="imgSASvsPY\logosas.png"  width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-comment" style="color: grey; font-style: italic;"># Reordering columns</span>
+testdata = testdata[[<span class="hljs-string" style="font-weight: 700; color: green;">"Country"</span>, <span class="hljs-string" style="font-weight: 700; color: green;">"Capital"</span>, <span class="hljs-string" style="font-weight: 700; color: green;">"PopCountry"</span>, <span class="hljs-string" style="font-weight: 700; color: green;">"PopCapital"</span>, <span class="hljs-string" style="font-weight: 700; color: green;">"CountryCode"</span>]]</pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\SAS_Reorder.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PY_Reorder.jpg" />
+  </div>
+ </div>
+ 
+
+<!--========================================================================================================================-->
+<br /><br /><br />
+<hr />
+<h2 id="stringop">String operations</h2>
+<a href="#top">Back to top</a>
+<br /><br />
+<div class="info">We apply string operations by chaining together functions. Pasting string variables is done with a simple <tt>+</tt>.
+<br /><br />
+Note the difference in selecting the substring. Python substring starts on 0 and uses the "up to but not including" to set the
+upper limit.</div>
+<br /><br />
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* String operations;</span>
+<span style="color: #000080; font-weight: bold;">data</span> TESTDATA;
+	<span style="color: #0000ff;">set</span> TESTDATA;
+	StartValue = <span style="color: #0000ff;">upcase</span><span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">substr</span><span style="color: #66cc66;">&#40;</span>Country, <span style="color: #2e8b57; font-weight: bold;">1</span>, <span style="color: #2e8b57; font-weight: bold;">3</span><span style="color: #66cc66;">&#41;</span><span style="color: #66cc66;">&#41;</span>;
+	PastedValue = strip<span style="color: #66cc66;">&#40;</span>CountryCode<span style="color: #66cc66;">&#41;</span> || strip<span style="color: #66cc66;">&#40;</span>StartValue<span style="color: #66cc66;">&#41;</span>;
+<span style="color: #000080; font-weight: bold;">run</span>;</pre>
+<br /><img src="imgSASvsPY\logosas.png"  width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-comment" style="color: grey; font-style: italic;"># String operations</span>
+testdata[<span class="hljs-string" style="font-weight: 700; color: green;">"StartValue"</span>] = testdata[<span class="hljs-string" style="font-weight: 700; color: green;">"Country"</span>].str[<span class="hljs-number" style="color: rgb(0, 0, 255); font-weight: 400;">0</span>:<span class="hljs-number" style="color: rgb(0, 0, 255); font-weight: 400;">3</span>].str.upper()
+testdata[<span class="hljs-string" style="font-weight: 700; color: green;">"PastedValue"</span>] = testdata[<span class="hljs-string" style="font-weight: 700; color: green;">"StartValue"</span>] + testdata[<span class="hljs-string" style="font-weight: 700; color: green;">"CountryCode"</span>]</pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\SAS_StringOp.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PY_StringOp.jpg" />
+  </div>
+ </div>
+
+<!--========================================================================================================================-->
+<br /><br /><br />
+<hr />
+<h2 id="wherestm">Where statement</h2>
+<a href="#top">Back to top</a>
+<br /><br />
+<div class="info">In SAS you run through the whole table in a DATA-step and apply the filter.
+The <tt>pandas</tt> library has a lot of different methods for subsetting (or 'slicing') the dataframe.
+In this example we are using <tt>loc</tt>, but there are others such as <tt>iloc</tt> or just using <tt>[]</tt>.
+They are typically targeted directly at the rows.</div>
+<br /><br />
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* Where statement;</span>
+<span style="color: #000080; font-weight: bold;">data</span> SUBSET2;
+	<span style="color: #0000ff;">set</span> TESTDATA;
+	<span style="color: #0000ff;">where</span> PopCapital &gt; <span style="color: #2e8b57; font-weight: bold;">2000000</span>;
+<span style="color: #000080; font-weight: bold;">run</span>;
+&nbsp;</pre>
+<br /><img src="imgSASvsPY\logosas.png"  width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-comment" style="color: grey; font-style: italic;"># Where statement</span>
+subset2 = testdata.loc[testdata[<span class="hljs-string" style="font-weight: 700; color: green;">'PopCapital'</span>] &gt; <span class="hljs-number" style="color: rgb(0, 0, 255); font-weight: 400;">2000000</span>]</pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\SAS_Where.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PY_Where.jpg" />
+  </div>
+ </div>
+ 
+ 
+ 
+
+<!--========================================================================================================================-->
+<br /><br /><br />
+<hr />
+<h2 id="ifelsestm">If/else condition</h2>
+<a href="#top">Back to top</a>
+<br /><br />
+<div class="info">The easiest way to use if/else conditions in Python is in a custom function.
+An alternative way is by using row operations as demonstrated here.</div>
+<br /><br />
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* If/else condition;</span>
+<span style="color: #000080; font-weight: bold;">data</span> TESTDATA;
+	<span style="color: #0000ff;">set</span> TESTDATA;
+	<span style="color: #0000ff;">length</span> PopClass $ <span style="color: #2e8b57; font-weight: bold;">10</span>;
+	<span style="color: #0000ff;">if</span> PopCountry &gt; <span style="color: #2e8b57; font-weight: bold;">10000000</span> <span style="color: #0000ff;">then</span> PopClass = <span style="color: #a020f0;">'Over 10M'</span>;
+	<span style="color: #0000ff;">else</span> <span style="color: #0000ff;">if</span> PopCountry &gt; <span style="color: #2e8b57; font-weight: bold;">5000000</span> <span style="color: #0000ff;">then</span> PopClass = <span style="color: #a020f0;">'Over 5M'</span>;
+	<span style="color: #0000ff;">else</span> PopClass = <span style="color: #a020f0;">'Under 5M'</span>;
+<span style="color: #000080; font-weight: bold;">run</span>;</pre>
+<br /><img src="imgSASvsPY\logosas.png"  width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-comment" style="color: grey; font-style: italic;"># If/else condition</span>
+testdata.loc[testdata[<span class="hljs-string" style="font-weight: 700; color: green;">'PopCountry'</span>] &lt; <span class="hljs-number" style="color: rgb(0, 0, 255); font-weight: 400;">5000000</span>, <span class="hljs-string" style="font-weight: 700; color: green;">'PopClass'</span>] = <span class="hljs-string" style="font-weight: 700; color: green;">'Under 5M'</span>
+testdata.loc[testdata[<span class="hljs-string" style="font-weight: 700; color: green;">'PopCountry'</span>] &gt; <span class="hljs-number" style="color: rgb(0, 0, 255); font-weight: 400;">5000000</span>, <span class="hljs-string" style="font-weight: 700; color: green;">'PopClass'</span>] = <span class="hljs-string" style="font-weight: 700; color: green;">'Over 5M'</span>
+testdata.loc[testdata[<span class="hljs-string" style="font-weight: 700; color: green;">'PopCountry'</span>] &gt; <span class="hljs-number" style="color: rgb(0, 0, 255); font-weight: 400;">10000000</span>, <span class="hljs-string" style="font-weight: 700; color: green;">'PopClass'</span>] = <span class="hljs-string" style="font-weight: 700; color: green;">'Over 10M'</span></pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\SAS_IfElse.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PY_IfElse.jpg" />
+  </div>
+ </div>
+ 
+ 
+
+<!--========================================================================================================================-->
+<br /><br /><br />
+<hr />
+<h2 id="mergejoin">Merge/join tables</h2>
+<a href="#top">Back to top</a>
+<br /><br />
+<div class="info">Showing SAS-examples with both PROC SQL and MERGE.</div>
+<br /><br />
+
+<h3>Input</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\SAS_PreJoin.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PY_PreJoin.jpg" />
+  </div>
+ </div>
+ 
+<br /><br />
+<div class="info">Joining tables is done with the <tt>merge()</tt> function. The default join type is <tt>inner</tt>.
+If there is more than one key column, they are passed as a list:<br />
+<tt>on=["key1", "key2", "key3"]</tt>.</div>
+<br /><br />
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* Inner join;</span>
+<span style="color: #000080; font-weight: bold;">proc sql</span>;
+<span style="color: #0000ff;">create</span> <span style="color: #0000ff;">table</span> JOINED <span style="color: #0000ff;">as</span>
+<span style="color: #0000ff;">select</span> t1.idcol, t1.value, t2.string
+<span style="color: #0000ff;">from</span> WORK.TABLE1 <span style="color: #0000ff;">as</span> t1
+<span style="color: #0000ff;">inner join</span> WORK.TABLE2 <span style="color: #0000ff;">as</span> t2
+	<span style="color: #0000ff;">on</span> t1.idcol = t2.idcol;
+<span style="color: #000080; font-weight: bold;">quit</span>;</pre>
+<br /><img src="imgSASvsPY\logosas.png"  width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-comment" style="color: grey; font-style: italic;"># Inner join</span>
+joined = pd.merge(table1, table2, on=<span class="hljs-string" style="font-weight: 700; color: green;">"idcol"</span>)</pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\SAS_InnerJoin.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PY_InnerJoin.jpg" />
+  </div>
+ </div>
+ 
+<br /><br />
+<div class="info">Left join is very similar to inner join, it just has to be specified in <tt>how="left"</tt>.
+Here you can also specify <tt>"outer"</tt> or <tt>"right"</tt>.
+<br /><br />
+Also worthy of note, the <tt>merge()</tt> function does NOT require the input tables to be sorted.</div>
+<br /><br />
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* Left join;</span>
+<span style="color: #000080; font-weight: bold;">data</span> WORK.LEFTJOIN;
+	<span style="color: #0000ff;">merge</span> WORK.TABLE1<span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">in</span>=a<span style="color: #66cc66;">&#41;</span> WORK.TABLE2<span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">in</span>=b<span style="color: #66cc66;">&#41;</span>;
+	<span style="color: #0000ff;">by</span> idcol;
+	<span style="color: #0000ff;">if</span> a;
+<span style="color: #000080; font-weight: bold;">run</span>;</pre>
+<br /><img src="imgSASvsPY\logosas.png"  width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-comment" style="color: grey; font-style: italic;"># Left join</span>
+leftjoin = pd.merge(table1, table2, how=<span class="hljs-string" style="font-weight: 700; color: green;">"left"</span>, on=<span class="hljs-string" style="font-weight: 700; color: green;">"idcol"</span>)</pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\SAS_LeftJoin.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PY_LeftJoin.jpg" />
+  </div>
+ </div>
+ 
+ 
+
+<!--========================================================================================================================-->
+<br /><br /><br />
+<hr />
+<h2 id="append">Append tables</h2>
+<a href="#top">Back to top</a>
+<br /><br />
+<div class="info">Appending tables is done with <tt>append()</tt> or with <tt>concat()</tt>.</div>
+<br /><br />
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* Append tables;</span>
+<span style="color: #000080; font-weight: bold;">data</span> LARGETABLE;
+	<span style="color: #0000ff;">set</span> TESTDATA TESTDATA;
+<span style="color: #000080; font-weight: bold;">run</span>;</pre>
+<br /><img src="imgSASvsPY\logosas.png"  width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-comment" style="color: grey; font-style: italic;"># Append tables</span>
+largetable = testdata.append(testdata)</pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\SAS_Append.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PY_Append.jpg" />
+  </div>
+ </div>
+ 
+ 
+ 
+
+<!--========================================================================================================================-->
+<br /><br /><br />
+<hr />
+<h2 id="agg">Aggregating a table</h2>
+<a href="#top">Back to top</a>
+<br /><br />
+<div class="info">The 'class' variable is specified in the <tt>groupby()</tt> function.
+The function <tt>agg("sum")</tt> will sum up all numeric columns. To specify what column we
+want to sum (the 'var' in SAS), we pass a dictionary (parts in <tt>{}</tt>) specifying the
+column and operation.<br />
+<br />
+We also pass <tt>set_index=False</tt> to get a pandas dataframe back. If not specified, we
+would get a slightly different kind of table.</div>
+<br /><br />
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* Aggregating a table;</span>
+<span style="color: #000080; font-weight: bold;">proc summary</span> <span style="color: #000080; font-weight: bold;">data</span>=LARGETABLE <span style="color: #0000ff;">missing nway noprint</span>;
+	<span style="color: #0000ff;">class</span> Country;
+	<span style="color: #0000ff;">var</span> PopCountry;
+	<span style="color: #0000ff;">output</span> <span style="color: #0000ff;">out</span>=DOUBLEPOP<span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">drop</span>=_:<span style="color: #66cc66;">&#41;</span> <span style="color: #0000ff;">sum</span>=;
+<span style="color: #000080; font-weight: bold;">run</span>;</pre>
+<br /><img src="imgSASvsPY\logosas.png"  width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-comment" style="color: grey; font-style: italic;"># Aggregating a table</span>
+doublepop = largetable.groupby(<span class="hljs-string" style="font-weight: 700; color: green;">'Country'</span>, as_index=<span class="hljs-keyword" style="font-weight: 700; color: navy;">False</span>).agg({<span class="hljs-string" style="font-weight: 700; color: green;">'PopCountry'</span>: <span class="hljs-string" style="font-weight: 700; color: green;">'sum'</span>})</pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\SAS_Aggregate.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PY_Aggregate.jpg" />
+  </div>
+ </div>
+ 
+
+
+
+<!--========================================================================================================================-->
+<br /><br /><br />
+<hr />
+<h2 id="sort">Sorting a table</h2>
+<a href="#top">Back to top</a>
+<br /><br />
+<div class="info">Sorting is done with <tt>sort_values()</tt>. By default it sorts
+ascending which can be switched to descending with <tt>ascending=False</tt>.</div>
+<br /><br />
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* Sorting a table - descending;</span>
+<span style="color: #000080; font-weight: bold;">proc sort</span> <span style="color: #0000ff;">data</span>=LARGETABLE <span style="color: #0000ff;">out</span>=SORT1;
+	<span style="color: #0000ff;">by descending</span> PopCountry;
+<span style="color: #000080; font-weight: bold;">run</span>;</pre>
+<br /><img src="imgSASvsPY\logosas.png"  width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-comment" style="color: grey; font-style: italic;"># Sorting a table - descending</span>
+sort1 = largetable.sort_values(by=<span class="hljs-string" style="font-weight: 700; color: green;">"PopCountry"</span>, ascending=<span class="hljs-keyword" style="font-weight: 700; color: navy;">False</span>)</pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\SAS_Sort1.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PY_Sort1.jpg" />
+  </div>
+ </div>
+<br /><br />
+<div class="info">Sorting and removing duplicates are two different operations in pandas.
+We can do both at the same time by chaining functions <tt>sort_values()</tt>
+and <tt>drop_duplicates()</tt>. We have to specify "PopCountry" in both.<br />
+<br />
+Since ascending sort is default, it does not need to be specified, just like in SAS.</div>
+<br /><br />
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* Sorting a table - ascending and unique;</span>
+<span style="color: #000080; font-weight: bold;">proc sort</span> <span style="color: #0000ff;">data</span>=LARGETABLE <span style="color: #0000ff;">out</span>=SORT2 <span style="color: #0000ff;">nodup</span>;
+	<span style="color: #0000ff;">by</span> PopCountry;
+<span style="color: #000080; font-weight: bold;">run</span>;
+&nbsp;</pre>
+<br /><img src="imgSASvsPY\logosas.png"  width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-comment" style="color: grey; font-style: italic;"># Sorting a table - ascending and unique</span>
+sort2 = largetable.sort_values(by=<span class="hljs-string" style="font-weight: 700; color: green;">"PopCountry"</span>).drop_duplicates(<span class="hljs-string" style="font-weight: 700; color: green;">"PopCountry"</span>)</pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\SAS_Sort2.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PY_Sort2.jpg" />
+  </div>
+ </div>
+
+
+<!--========================================================================================================================-->
+<br /><br /><br />
+<hr />
+<h2 id="custom">Custom function</h2>
+<a href="#top">Back to top</a>
+<br /><br />
+<div class="info">It's not so common to define your own functions in SAS, but it is used a lot in Python.
+<br /><br />
+Note the different arguments used in the <tt>round()</tt> function. In Python you specify how many decimals you want.<br />
+<br />
+<i>PS. The function in this example is completely nonsensical!</i></div>
+<br /><br />
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* Custom function;</span>
+<span style="color: #000080; font-weight: bold;">proc fcmp</span> outlib=work.funcs.myfuncs;
+<span style="color: #0000ff;">function</span> SomeCalculation<span style="color: #66cc66;">&#40;</span>totalPop, cityPop<span style="color: #66cc66;">&#41;</span>;
+	<span style="color: #0000ff;">return</span> <span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#40;</span><span style="color: #2e8b57; font-weight: bold;">3.14</span>*cityPop**<span style="color: #2e8b57; font-weight: bold;">2</span>)/(<span style="color: #2e8b57; font-weight: bold;">200</span>*totalPop - <span style="color: #2e8b57; font-weight: bold;">128000</span>));
+<span style="color: #0000ff;">endsub</span>;
+<span style="color: #000080; font-weight: bold;">run</span>;
+&nbsp;
+<span style="color: #006400; font-style: italic;">*Running function;</span>
+<span style="color: #0000ff;">options</span> cmplib=work.funcs;
+<span style="color: #000080; font-weight: bold;">data</span> COMPVALUE;
+	<span style="color: #0000ff;">set</span> TESTDATA;
+	CalcValue = SomeCalculation<span style="color: #66cc66;">&#40;</span>PopCountry, PopCapital<span style="color: #66cc66;">&#41;</span>;
+	CalcValue = <span style="color: #0000ff;">round</span><span style="color: #66cc66;">&#40;</span>CalcValue, .01<span style="color: #66cc66;">&#41;</span>;
+<span style="color: #000080; font-weight: bold;">run</span>;</pre>
+<br /><img src="imgSASvsPY\logosas.png"  width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-comment" style="color: grey; font-style: italic;"># Custom function</span>
+<span class="hljs-function"><span class="hljs-keyword" style="font-weight: 700; color: navy;">def</span> <span class="hljs-title" style="font-weight: 400; color: rgb(0, 0, 0);">SomeCalculation</span><span class="hljs-params">(totalPop, cityPop)</span>:</span>
+    <span class="hljs-keyword" style="font-weight: 700; color: navy;">return</span> (<span class="hljs-number" style="color: rgb(0, 0, 255); font-weight: 400;">3.14</span>*cityPop**<span class="hljs-number" style="color: rgb(0, 0, 255); font-weight: 400;">2</span>)/(<span class="hljs-number" style="color: rgb(0, 0, 255); font-weight: 400;">200</span>*totalPop - <span class="hljs-number" style="color: rgb(0, 0, 255); font-weight: 400;">128000</span>)
+
+<span class="hljs-comment" style="color: grey; font-style: italic;"># Running function</span>
+testdata[<span class="hljs-string" style="font-weight: 700; color: green;">"CalcValue"</span>] = SomeCalculation(testdata[<span class="hljs-string" style="font-weight: 700; color: green;">"PopCountry"</span>], testdata[<span class="hljs-string" style="font-weight: 700; color: green;">"PopCapital"</span>]).round(<span class="hljs-number" style="color: rgb(0, 0, 255); font-weight: 400;">2</span>)</pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\SAS_Custom.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PY_Custom.jpg" />
+  </div>
+ </div>
+ 
+ 
+
+<!--========================================================================================================================-->
+<br /><br /><br />
+<hr />
+<h2 id="procfreq">Proc freq Example</h2>
+<a href="#top">Back to top</a>
+<br /><br />
+<div class="info">The PROCs in SAS don't always have a corresponding function in Python or pandas, but it is usually straight forward to
+recreate the logic.</div>
+<br /><br />
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* Calculate frequencies;</span>
+<span style="color: #000080; font-weight: bold;">proc freq</span> <span style="color: #0000ff;">data</span>=LARGETABLE;
+	<span style="color: #0000ff;">output out</span>=RESULT;
+	<span style="color: #0000ff;">tables</span> Country / <span style="color: #0000ff;">nocum</span>;
+<span style="color: #000080; font-weight: bold;">run</span>;</pre>
+<br /><img src="imgSASvsPY\logosas.png"  width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-comment" style="color: grey; font-style: italic;"># Calculate frequencies</span>
+result = largetable[<span class="hljs-string" style="font-weight: 700; color: green;">"Country"</span>].value_counts().reset_index()
+result.columns = [<span class="hljs-string" style="font-weight: 700; color: green;">"Country"</span>,<span class="hljs-string" style="font-weight: 700; color: green;">"Frequency"</span>]
+result[<span class="hljs-string" style="font-weight: 700; color: green;">"Percent"</span>] = <span class="hljs-number" style="color: rgb(0, 0, 255); font-weight: 400;">100</span>*result[<span class="hljs-string" style="font-weight: 700; color: green;">"Frequency"</span>]/result[<span class="hljs-string" style="font-weight: 700; color: green;">"Frequency"</span>].sum()</pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\SAS_Procfreq.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PY_Procfreq.jpg" />
+  </div>
+ </div>
+ 
+<br /><br />
+<div class="info">If there are any PROCs that you use a lot, it is possible to write a function for it in Python.
+<br />
+<br />
+<i>This function only supports one 'tables' or 'class' variable, but can easily be expanded</i></div>
+ <br />
+ <br />
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* Calculate frequencies 2;</span>
+<span style="color: #000080; font-weight: bold;">proc freq</span> <span style="color: #000080; font-weight: bold;">data</span>=LARGETABLE;
+	<span style="color: #0000ff;">output out</span>=RESULT;
+	<span style="color: #0000ff;">tables</span> Country;
+<span style="color: #000080; font-weight: bold;">run</span>;</pre>
+<br /><img src="imgSASvsPY\logosas.png"  width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-function"><span class="hljs-keyword" style="font-weight: 700; color: navy;">def</span> <span class="hljs-title" style="font-weight: 400; color: rgb(0, 0, 0);">PROCFREQ</span><span class="hljs-params">(data, variable)</span>:</span>
+    nrows = data.shape[<span class="hljs-number" style="color: rgb(0, 0, 255); font-weight: 400;">0</span>]
+    output = data[variable].value_counts().reset_index()
+    output.columns = [variable, <span class="hljs-string" style="font-weight: 700; color: green;">"Frequency"</span>]
+    output[<span class="hljs-string" style="font-weight: 700; color: green;">"Percent"</span>] = <span class="hljs-number" style="color: rgb(0, 0, 255); font-weight: 400;">100</span>*output[<span class="hljs-string" style="font-weight: 700; color: green;">"Frequency"</span>]/nrows
+    output[<span class="hljs-string" style="font-weight: 700; color: green;">"CumFrequency"</span>] = output[<span class="hljs-string" style="font-weight: 700; color: green;">"Frequency"</span>].cumsum()
+    output[<span class="hljs-string" style="font-weight: 700; color: green;">"CumPercent"</span>] = output[<span class="hljs-string" style="font-weight: 700; color: green;">"Percent"</span>].cumsum()
+    <span class="hljs-keyword" style="font-weight: 700; color: navy;">return</span> output
+    
+<span class="hljs-comment" style="color: grey; font-style: italic;"># Calculate frequencies 2</span>
+result = PROCFREQ(largetable, <span class="hljs-string" style="font-weight: 700; color: green;">"Country"</span>)</pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\SAS_Procfreq2.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PY_Procfreq2.jpg" />
+  </div>
+ </div>
+ 
+ 
+ 
+ 
+
+<!--========================================================================================================================-->
+<br /><br /><br />
+<hr />
+<h2 id="deltab">Deleting a table</h2>
+<a href="#top">Back to top</a>
+<br /><br />
+<div class="info">There isn't really any delete functionality in Python. Memory used for a huge object can
+be freed by simply assigning the variable to <tt>None</tt>.</div>
+<br /><br />
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<pre class="sas" style="font-family:monospace;"><span style="color: #006400; font-style: italic;">* Deleting a table - ALTERNATIVE 1;</span>
+<span style="color: #000080; font-weight: bold;">proc sql</span>;
+<span style="color: #0000ff;">drop</span> <span style="color: #0000ff;">table</span> WORK.TESTDATA;
+<span style="color: #000080; font-weight: bold;">quit</span>;
+&nbsp;
+<span style="color: #006400; font-style: italic;">* Deleting a table - ALTERNATIVE 2;</span>
+<span style="color: #000080; font-weight: bold;">proc datasets</span> library = WORK nolist;
+  <span style="color: #0000ff;">delete</span> TESTDATA;
+<span style="color: #000080; font-weight: bold;">run</span>;
+&nbsp;
+<span style="color: #006400; font-style: italic;">* Deleting a table - ALTERNATIVE 3;</span>
+<span style="color: #000080; font-weight: bold;">proc</span> <span style="color: #0000ff;">delete</span> <span style="color: #000080; font-weight: bold;">data</span> = WORK.TESTDATA;
+<span style="color: #000080; font-weight: bold;">run</span>;</pre>
+<br /><img src="imgSASvsPY\logosas.png"  width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; color: rgb(0, 0, 0); background: rgb(255, 255, 255);"><span class="hljs-comment" style="color: grey; font-style: italic;"># Deleting a table</span>
+testdata = <span class="hljs-keyword" style="font-weight: 700; color: navy;">None</span></pre>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+
+
+
+
+
+<template> <!-- TEMPLATE -->
+
+<!--========================================================================================================================-->
+<br /><br /><br />
+<hr />
+<h2 id="%%TAG%%">%%TITLE%%</h2>
+<a href="#top">Back to top</a>
+<br /><br />
+
+<div class="row">
+  <div class="SAScolumn"> <!------------------------------->
+<tt>%%SASCODE%%</tt>
+<br /><img src="imgSASvsPY\logosas.png"  width="75px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="PYcolumn"> <!--------------------------------->
+  <tt>%%PYTHON%%</tt>
+<br /><img src="imgSASvsPY\logopy.png"  width="45px" style="float: right;"/>
+  </div> <!------------------------------------------------>
+</div>
+
+<h3>Results</h3>
+
+<div class="row">
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PLACEHOLDER.jpg" />
+  </div>
+  <div class="SEPcolumn">&nbsp;</div>
+  <div class="IMGcolumn">
+    <img style="border: 1px solid black;" src="imgSASvsPY\PLACEHOLDER.jpg" />
+  </div>
+ </div>
+
+</template> <!-- ======================================= -->
+
+
+<small>That's it! That's all!! :-)</small>
+</body>
+</html>
+
